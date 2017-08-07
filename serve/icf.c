@@ -157,7 +157,16 @@ int uri_icf_detect_objects(const void* context, const void* parsed, ebb_buf* buf
 		return -1;
 	}
 	ccv_dense_matrix_t* image = 0;
-	ccv_read(parser->source.data, &image, CCV_IO_ANY_STREAM | CCV_IO_RGB_COLOR, parser->source.written);
+	int* src = (int*)parser->source.data;
+	int rows = *(src), cols = *(src + 1), step = *(src + 2);
+	void* data = (void*)(src + 3);
+	ccv_read(
+		data,
+		&image,
+		CCV_IO_ANY_RAW | CCV_IO_BGR_RAW,
+		rows,
+		cols,
+		step);
 	free(parser->source.data);
 	if (image == 0)
 	{
